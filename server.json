@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Br0ski777/sentiment-analyzer",
+  "title": "Sentiment Analyzer API",
+  "description": "Analyze text sentiment, emotions, confidence scores, and key phrases. x402 USDC.",
+  "version": "1.0.0",
+  "websiteUrl": "https://github.com/Br0ski777/sentiment-analyzer-x402",
+  "repository": {
+    "url": "https://github.com/Br0ski777/sentiment-analyzer-x402",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "sse",
+      "url": "https://sentiment-analyzer-x402-production.up.railway.app/mcp"
+    }
+  ]
+}
