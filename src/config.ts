@@ -32,6 +32,35 @@ Do NOT use for summarization -- use ai_summarize_text. Do NOT use for content ex
         },
         required: ["text"],
       },
+      outputSchema: {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "Input text (truncated)"
+            },
+            "sentiment": {
+              "type": "string",
+              "description": "Overall sentiment (positive/negative/neutral)"
+            },
+            "score": {
+              "type": "number",
+              "description": "Sentiment score -100 to 100"
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Confidence 0-100"
+            },
+            "emotions": {
+              "type": "object",
+              "description": "Emotion scores"
+            }
+          },
+          "required": [
+            "sentiment",
+            "score"
+          ]
+        },
     },
     {
       method: "POST",
@@ -58,6 +87,45 @@ Do NOT use for single text -- use text_analyze_sentiment. Do NOT use for text cl
         },
         required: ["texts"],
       },
+      outputSchema: {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "count": {
+              "type": "number"
+            },
+            "summary": {
+              "type": "object",
+              "properties": {
+                "averageScore": {
+                  "type": "number"
+                },
+                "positiveCount": {
+                  "type": "number"
+                },
+                "negativeCount": {
+                  "type": "number"
+                },
+                "neutralCount": {
+                  "type": "number"
+                },
+                "overallSentiment": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "results",
+            "count",
+            "summary"
+          ]
+        },
     },
   ],
 };
