@@ -1,5 +1,20 @@
 import type { Hono } from "hono";
 
+
+// ATXP: requirePayment only fires inside an ATXP context (set by atxpHono middleware).
+// For raw x402 requests, the existing @x402/hono middleware handles the gate.
+// If neither protocol is active (ATXP_CONNECTION unset), tryRequirePayment is a no-op.
+async function tryRequirePayment(price: number): Promise<void> {
+  if (!process.env.ATXP_CONNECTION) return;
+  try {
+    const { requirePayment } = await import("@atxp/server");
+    const BigNumber = (await import("bignumber.js")).default;
+    await requirePayment({ price: BigNumber(price) });
+  } catch (e: any) {
+    if (e?.code === -30402) throw e;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // AFINN-165 style word scores (-5 to +5) — top 500 positive + 500 negative
 // ---------------------------------------------------------------------------
@@ -328,6 +343,7 @@ function analyzeSentiment(text: string): SentimentResult {
 export function registerRoutes(app: Hono) {
   // POST /api/analyze — single text
   app.post("/api/analyze", async (c) => {
+    await tryRequirePayment(0.005);
     const body = await c.req.json<{ text?: string }>();
     if (!body.text || typeof body.text !== "string") {
       return c.json({ error: "Missing 'text' field in request body" }, 400);
@@ -341,6 +357,7 @@ export function registerRoutes(app: Hono) {
 
   // POST /api/analyze/batch — up to 20 texts
   app.post("/api/analyze/batch", async (c) => {
+    await tryRequirePayment(0.04);
     const body = await c.req.json<{ texts?: string[] }>();
     if (!body.texts || !Array.isArray(body.texts)) {
       return c.json({ error: "Missing 'texts' array in request body" }, 400);
